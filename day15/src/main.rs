@@ -130,6 +130,8 @@ fn main() {
 
     for m in moves.iter() {
         apply_move(&mut field, &mut pos, *m);
+        // clear console
+
     }
 
     println!("Sum: {}", field.get_sum_task1());
@@ -162,9 +164,15 @@ fn main() {
 
     for m in moves.iter() {
         apply_move(&mut field, &mut pos, *m);
+        // print!("\x1B[2J\x1B[1;1H");
+        // print!("Move: {:?}\n", m);
+        // print_field(&field, &pos);
+
+        //read line
+        // std::io::stdin().read_line(&mut String::new()).unwrap();
     }
 
-    // print_field(&field, &pos);
+    print_field(&field, &pos);
 
     println!("Sum: {}", field.get_sum_task2());
 }

@@ -1,6 +1,7 @@
-use std::collections::{HashMap, HashSet};
+use std::{collections::{HashMap, HashSet}, env::current_dir};
 
 use itertools::iproduct;
+use priority_queue::PriorityQueue;
 
 const NEIGHBOURS: [((isize, isize), char); 4] = [
     ((-1, 0), '<'), // left
@@ -106,6 +107,32 @@ fn solve(
     }
 }
 
+type DistKey = (XY, Orientation, Orientation);
+
+fn build_distance_map(
+    field: &Field,
+) -> HashMap<DistKey, usize> {
+    let mut distance_map = HashMap::new();
+
+    for (x,y) in iproduct!(1..field[0].len(), 1..field.len()) {
+        if field[y][x] == '#' {
+            continue;
+        }
+        for (_, curr_dir) in NEIGHBOURS {
+            for ((dx,dy), target_dir) in NEIGHBOURS {
+                if field[(y as isize+dy) as usize][(x as isize+dx) as usize] == '#' {
+                    continue;
+                }
+                let key = ((x,y), curr_dir, target_dir);
+                distance_map.insert(key, 1 + get_turns(curr_dir, target_dir) * 1000);
+            }
+        }
+    }
+    distance_map    
+}
+
+
+
 fn get_neighbours(
     pos: XY,
     orientation: Orientation,
@@ -124,6 +151,32 @@ fn get_neighbours(
         res.push(((xx, yy), o, turns));
     }
     res
+}
+
+fn dijkstra(start: XY, end: XY, field: &Field) -> usize {
+    let mut distance_map = build_distance_map(field);
+    let mut distance = HashMap::new();
+
+    let mut queue = PriorityQueue::new();
+
+    let mut curr = (start, '>');
+    queue.push(curr, 0);
+    distance.insert(curr, 0);
+
+    let ((x,y), o) = curr;
+    for ((dx, dy), oo) in NEIGHBOURS {
+        let (xx, yy) = ((x as isize + dx) as usize, (y as isize + dy) as usize);
+        if field[yy][xx] == '#' {
+            continue;
+        }
+        let key = ((xx, yy), oo);
+        distance.insert(key, 1);
+        queue.push(key, 1);
+    }
+
+
+    
+    unreachable!()
 }
 
 fn get_turns(current: Orientation, target: Orientation) -> usize {

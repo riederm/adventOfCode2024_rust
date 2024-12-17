@@ -1,8 +1,6 @@
 [package]
-name = "day16"
+name = "day17"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-itertools = "0.13.0"
-priority-queue = "2.1.1"
